@@ -1,15 +1,117 @@
 <html>
-  <head>
-    <title>Voting DApp</title>
-    <style></style>
-    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
-  </head>
-  <body>
-    <h3>Press F12 to the developer console!</h3>
-    <script>
-      web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-      console.log(web3)
-      console.log("Start hacking with the private ethereum network.")
-    </script>
-  </body>
+
+<head>
+  <title>Voting DApp</title>
+  <style></style>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+</head>
+
+<body>
+  <div class="container">
+      <h2 class="mt-3">Voting <span class="badge badge-secondary">DApp</span></h2>
+
+    <ul class="nav nav-tabs pt-3" id="myTab" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" id="account-tab" data-toggle="tab" href="#panel-account" role="tab" aria-controls="panel-account" aria-selected="true">Account</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" id="node-status-tab" data-toggle="tab" href="#panel-node-status" role="tab" aria-controls="panel-node-status" aria-selected="false">Node Status</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link disabled" id="voting-tab" data-toggle="tab" href="#panel-voting" role="tab" aria-controls="panel-voting" aria-selected="false">Voting</a>
+      </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+      <div class="tab-pane show active" id="panel-account" role="tabpanel" aria-labelledby="account-tab">
+        <div class="container pt-3">
+          <div class="pt-3 pb-3">
+            <h5>Address: <span class="user-address text-success"></span></h5>
+            <div class="text-secondary">
+              Balance: <span class="user-balance">0</span> ether
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary btn-sm" onclick="Dapp.createNewAccount()">Create new account</button>
+          or
+          <button type="button" class="btn btn-secondary btn-sm" onclick="Dapp.inputUserAddress()">Input existing address</button>
+        </div>
+      </div>
+      <div class="tab-pane" id="panel-node-status" role="tabpanel" aria-labelledby="node-status-tab">
+        <div class="container pt-3 text-secondary">
+            <h6>Coinbase: <span class="node-status-coinbase"></span></h6>
+            <h6>Mining: <span class="node-status-mining"></span></h6>
+            <h6>Hashrate: <span class="node-status-hashrate"></span></h6>
+            <h6>Block number: <span class="node-status-block-number"></span></h6>
+            <h6>Gas price: <span class="node-status-gas-price"></span></h6>
+        </div>
+      </div>
+      <div class="tab-pane" id="panel-voting" role="tabpanel" aria-labelledby="voting-tab">Voting</div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+  <script>
+    const Dapp = {
+      web3: new Web3(new Web3.providers.HttpProvider("http://localhost:8545")),
+      userAddress: undefined,
+
+      createNewAccount: function() {
+        Dapp.web3.personal.newAccount(prompt("Please enter your password"), function(error, address) {
+          if (error) {
+            alert(error);
+          } else {
+            Dapp.setUserAddress(address);
+            $(".nav-tabs .nav-link").removeClass("disabled");
+          }
+        });
+      },
+
+      inputUserAddress: function(){
+        var address = prompt("Please enter address", "0x");
+        if (!Dapp.web3.isAddress(address)) {
+          alert("Please input a valid address!");
+          return;
+        }
+        
+        Dapp.web3.personal.unlockAccount(address, prompt("Please enter your password for this address"), function(error, result){
+          if (error) {
+            alert(error);
+          } else {
+            Dapp.setUserAddress(address);
+            $(".nav-tabs .nav-link").removeClass("disabled");
+          }
+        });
+      },
+
+      setUserAddress: function(address) {
+        Dapp.userAddress = address;
+        $(".user-address").text(address);
+        Dapp.refreshUserBalance();
+      },
+
+      refreshUserBalance: function() {
+        if (Dapp.userAddress) {
+          Dapp.web3.eth.getBalance(Dapp.userAddress, function(error, weiAmount){
+            var ethValue = Dapp.web3.fromWei(weiAmount, 'ether');
+            $(".user-balance").text(ethValue);
+          });
+        }
+      },
+
+      refreshNodeStatus: function() {
+        Dapp.web3.eth.getCoinbase(function(e,v){$(".node-status-coinbase").text(v)});
+        Dapp.web3.eth.getMining(function(e,v){$(".node-status-mining").text(v)});
+        Dapp.web3.eth.getHashrate(function(e,v){$(".node-status-hashrate").text(v)});
+        Dapp.web3.eth.getBlockNumber(function(e,v){$(".node-status-block-number").text(v)});
+        Dapp.web3.eth.getGasPrice(function(e,v){$(".node-status-gas-price").text(v)});
+      }
+    }
+    var intRefreshBalance = setInterval(Dapp.refreshUserBalance, 2000);
+    var intRefreshStatus = setInterval(Dapp.refreshNodeStatus, 2000);
+  </script>
+</body>
+
 </html>
