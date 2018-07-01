@@ -39,11 +39,14 @@ contract Poll{
         optionsCount++;
     }
 
-    function vote(uint index) public{
-        Option storage option = options[index];
-        require(!option.voters[msg.sender]);
-        option.voters[msg.sender] = true;
-        option.votedCount++;
+    function vote(uint[] optionsIndexes) public{
+        for (uint i=0; i < optionsIndexes.length; i++) {
+            uint index = optionsIndexes[i];
+            Option storage option = options[index];
+            require(!option.voters[msg.sender]);
+            option.voters[msg.sender] = true;
+            option.votedCount++;
+        }
     }
 
 }
