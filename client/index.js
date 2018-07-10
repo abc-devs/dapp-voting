@@ -111,6 +111,6 @@ window.addEventListener('load', function () {
         console.log('No Web3 Detected... using HTTP Provider')
         Dapp.web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
     }
-    Dapp.setUserAddress (Dapp.web3.eth.accounts[0]);
-    $(".nav-tabs .nav-link").removeClass("disabled");
+    // Dapp.setUserAddress (Dapp.web3.eth.accounts[0]);
+    // $(".nav-tabs .nav-link").removeClass("disabled");
 })
