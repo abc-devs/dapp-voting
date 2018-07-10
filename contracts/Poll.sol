@@ -8,7 +8,7 @@ contract PollFactory{
         deployedPolls.push(deployedPoll);
     }
     
-    function getDeployedPoll() public view returns(address[]){
+    function getDeployedPolls() public view returns(address[]){
         return deployedPolls;
     }
 
@@ -24,7 +24,6 @@ contract Poll{
 
     string public question;
     Option[] public options;
-    uint public optionsCount;
 
     function Poll(string initQuestion) public {
         question = initQuestion;
@@ -36,7 +35,6 @@ contract Poll{
             votedCount:0
         });
         options.push(newOption);
-        optionsCount++;
     }
 
     function vote(uint[] optionsIndexes) public{
@@ -47,6 +45,12 @@ contract Poll{
             option.voters[msg.sender] = true;
             option.votedCount++;
         }
+    }
+    function getSummary() public view returns(string,uint) {
+        return (
+            question,
+            options.length
+        );
     }
 
 }

@@ -45,7 +45,36 @@
             <h6>Gas price: <span class="node-status-gas-price"></span></h6>
         </div>
       </div>
-      <div class="tab-pane" id="panel-voting" role="tabpanel" aria-labelledby="voting-tab">Voting</div>
+      <div class="tab-pane" id="panel-voting" role="tabpanel" aria-labelledby="voting-tab">
+        <div class="container">
+            <div class="row"  style="margin-top: 15px">
+                <div class="col-sm-8">
+                    <label id="pollFactoryAddress"/>
+                </div>
+                <div class="col-sm-4">
+                  <button type="button" style="float: right" class="btn btn-primary btn-sm" onclick="Dapp.deployPollFactory()" id="deployPollFactory">Deploy PollFactory</button>
+                </div>
+            </div>
+            <div id="addPoll" style="display:none">
+              <h3>Create New Poll!</h3>
+              <div class="row" style="margin-top: 15px">
+                <div class="col-sm-4">
+                  <input type="text" id="pollQuestion" class="form-control" style="margin-top: 5px" placeholder="Question?">
+                </div>
+                <div class="col-sm-4">
+                  <div id="options"></div>
+                  <input type="button" value="+ option" style="margin-top: 10px;  float: right" class="btn btn-primary" id="add" onclick="Dapp.addOption()"
+                  />
+                </div>
+                <div class="col-sm-4">
+                  <button onclick="Dapp.createNewPoll()" style="margin-top: 5px;  float: right" class="btn btn-primary">Submit</button>
+                </div>
+              </div>
+            </div>
+        </div>
+         
+
+      </div>
     </div>
   </div>
 
@@ -53,65 +82,10 @@
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
-  <script>
-    const Dapp = {
-      web3: new Web3(new Web3.providers.HttpProvider("http://localhost:8545")),
-      userAddress: undefined,
-
-      createNewAccount: function() {
-        Dapp.web3.personal.newAccount(prompt("Please enter your password"), function(error, address) {
-          if (error) {
-            alert(error);
-          } else {
-            Dapp.setUserAddress(address);
-            $(".nav-tabs .nav-link").removeClass("disabled");
-          }
-        });
-      },
-
-      inputUserAddress: function(){
-        var address = prompt("Please enter address", "0x");
-        if (!Dapp.web3.isAddress(address)) {
-          alert("Please input a valid address!");
-          return;
-        }
-        
-        Dapp.web3.personal.unlockAccount(address, prompt("Please enter your password for this address"), function(error, result){
-          if (error) {
-            alert(error);
-          } else {
-            Dapp.setUserAddress(address);
-            $(".nav-tabs .nav-link").removeClass("disabled");
-          }
-        });
-      },
-
-      setUserAddress: function(address) {
-        Dapp.userAddress = address;
-        $(".user-address").text(address);
-        Dapp.refreshUserBalance();
-      },
-
-      refreshUserBalance: function() {
-        if (Dapp.userAddress) {
-          Dapp.web3.eth.getBalance(Dapp.userAddress, function(error, weiAmount){
-            var ethValue = Dapp.web3.fromWei(weiAmount, 'ether');
-            $(".user-balance").text(ethValue);
-          });
-        }
-      },
-
-      refreshNodeStatus: function() {
-        Dapp.web3.eth.getCoinbase(function(e,v){$(".node-status-coinbase").text(v)});
-        Dapp.web3.eth.getMining(function(e,v){$(".node-status-mining").text(v)});
-        Dapp.web3.eth.getHashrate(function(e,v){$(".node-status-hashrate").text(v)});
-        Dapp.web3.eth.getBlockNumber(function(e,v){$(".node-status-block-number").text(v)});
-        Dapp.web3.eth.getGasPrice(function(e,v){$(".node-status-gas-price").text(v)});
-      }
-    }
-    var intRefreshBalance = setInterval(Dapp.refreshUserBalance, 2000);
-    var intRefreshStatus = setInterval(Dapp.refreshNodeStatus, 2000);
-  </script>
+  <script src="compiled-contracts/Poll.js"></script>
+  <script src="compiled-contracts/PollFactory.js"></script>
+  <script src="index.js"></script>
+  
 </body>
 
 </html>
