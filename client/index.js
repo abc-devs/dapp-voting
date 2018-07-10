@@ -71,7 +71,7 @@ const Dapp = {
     },
     deployPollFactory: function () {
         var pollfactoryContract = Dapp.web3.eth.contract(JSON.parse(compiledFactory.interface));
-        var pollfactory = pollfactoryContract.new(
+        pollfactoryContract.new(
             {
                 from: Dapp.web3.eth.accounts[0],
                 data: '0x'+compiledFactory.bytecode,
