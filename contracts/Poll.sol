@@ -2,10 +2,10 @@ pragma solidity ^0.4.17;
 contract PollFactory{
     
     address[] deployedPolls;
-
+    address public latestPoll;
     function createPoll(string question) public {
-        address deployedPoll = new Poll(question);
-        deployedPolls.push(deployedPoll);
+        latestPoll = new Poll(question);
+        deployedPolls.push(latestPoll);
     }
     
     function getDeployedPolls() public view returns(address[]){

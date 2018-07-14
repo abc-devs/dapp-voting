@@ -4,31 +4,40 @@
   <title>Voting DApp</title>
   <style></style>
 
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
+    crossorigin="anonymous">
 </head>
 
 <body>
   <div class="container">
-      <h2 class="mt-3">Voting <span class="badge badge-secondary">DApp</span></h2>
+    <h2 class="mt-3">Voting
+      <span class="badge badge-secondary">DApp</span>
+    </h2>
 
     <ul class="nav nav-tabs pt-3" id="myTab" role="tablist">
       <li class="nav-item">
-        <a class="nav-link active" id="account-tab" data-toggle="tab" href="#panel-account" role="tab" aria-controls="panel-account" aria-selected="true">Account</a>
+        <a class="nav-link active" id="account-tab" data-toggle="tab" href="#panel-account" role="tab" aria-controls="panel-account"
+          aria-selected="true">Account</a>
       </li>
       <li class="nav-item">
-          <a class="nav-link" id="node-status-tab" data-toggle="tab" href="#panel-node-status" role="tab" aria-controls="panel-node-status" aria-selected="false">Node Status</a>
+        <a class="nav-link" id="node-status-tab" data-toggle="tab" href="#panel-node-status" role="tab" aria-controls="panel-node-status"
+          aria-selected="false">Node Status</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link disabled" id="voting-tab" data-toggle="tab" href="#panel-voting" role="tab" aria-controls="panel-voting" aria-selected="false">Voting</a>
+        <a class="nav-link disabled" id="voting-tab" data-toggle="tab" href="#panel-voting" role="tab" aria-controls="panel-voting"
+          aria-selected="false">Voting</a>
       </li>
     </ul>
     <div class="tab-content" id="myTabContent">
       <div class="tab-pane show active" id="panel-account" role="tabpanel" aria-labelledby="account-tab">
         <div class="container pt-3">
           <div class="pt-3 pb-3">
-            <h5>Address: <span class="user-address text-success"></span></h5>
+            <h5>Address:
+              <span class="user-address text-success"></span>
+            </h5>
             <div class="text-secondary">
-              Balance: <span class="user-balance">0</span> ether
+              Balance:
+              <span class="user-balance">0</span> ether
             </div>
           </div>
           <button type="button" class="btn btn-primary btn-sm" onclick="Dapp.createNewAccount()">Create new account</button>
@@ -38,54 +47,87 @@
       </div>
       <div class="tab-pane" id="panel-node-status" role="tabpanel" aria-labelledby="node-status-tab">
         <div class="container pt-3 text-secondary">
-            <h6>Coinbase: <span class="node-status-coinbase"></span></h6>
-            <h6>Mining: <span class="node-status-mining"></span></h6>
-            <h6>Hashrate: <span class="node-status-hashrate"></span></h6>
-            <h6>Block number: <span class="node-status-block-number"></span></h6>
-            <h6>Gas price: <span class="node-status-gas-price"></span></h6>
+          <h6>Coinbase:
+            <span class="node-status-coinbase"></span>
+          </h6>
+          <h6>Mining:
+            <span class="node-status-mining"></span>
+          </h6>
+          <h6>Hashrate:
+            <span class="node-status-hashrate"></span>
+          </h6>
+          <h6>Block number:
+            <span class="node-status-block-number"></span>
+          </h6>
+          <h6>Gas price:
+            <span class="node-status-gas-price"></span>
+          </h6>
         </div>
       </div>
       <div class="tab-pane" id="panel-voting" role="tabpanel" aria-labelledby="voting-tab">
         <div class="container">
-            <div class="row"  style="margin-top: 15px">
-                <div class="col-sm-8">
-                    <label id="pollFactoryAddress"/>
-                </div>
-                <div class="col-sm-4">
-                  <button type="button" style="float: right" class="btn btn-primary btn-sm" onclick="Dapp.deployPollFactory()" id="deployPollFactory">Deploy PollFactory</button>
-                </div>
+          <div class="row" style="margin-top: 15px">
+            <div class="col-lg-2">
+              <label>Factory's address </label>
             </div>
-            <div id="addPoll" style="display:none">
-              <h3>Create New Poll!</h3>
-              <div class="row" style="margin-top: 15px">
-                <div class="col-sm-4">
-                  <input type="text" id="pollQuestion" class="form-control" style="margin-top: 5px" placeholder="Question?">
-                </div>
-                <div class="col-sm-4">
-                  <div id="options"></div>
-                  <input type="button" value="+ option" style="margin-top: 10px;  float: right" class="btn btn-primary" id="add" onclick="Dapp.addOption()"
-                  />
-                </div>
-                <div class="col-sm-4">
-                  <button onclick="Dapp.createNewPoll()" style="margin-top: 5px;  float: right" class="btn btn-primary">Submit</button>
-                </div>
+            <div class="col-lg-8">
+              <label id="pollFactoryAddress" />
+            </div>
+            <div class="col-lg-2">
+              <button type="button" style="float: right;" class="btn btn-primary btn-sm" onclick="Dapp.deployPollFactory()" id="deployPollFactory">Deploy PollFactory</button>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px" id="pollArea">
+            <div class="col-lg-2">
+              <label>Poll's address </label>
+            </div>
+            <div class="col-lg-8">
+              <div id="pollAdresses">
+                
               </div>
             </div>
+            <div class="col-lg-2">
+              <button type="button" style="float: right;margin-top: 10px;display: none" class="btn btn-primary btn-sm" onclick="Dapp.findAllPolls()"
+                id="findAllPolls">Poll's Adresses</button>
+              <button type="button" style="float: right;;margin-top: 10px;display: none" class="btn btn-primary btn-sm" onclick="Dapp.viewPolls()"
+                id="viewPolls">View Poll Detail</button>
+            </div>
+          </div>
+
+          <div style="margin-top: 15px" id="pollDetail"></div>
+          <div id="addPoll" style="display: none">
+            <h3>Create New Poll!</h3>
+            <div class="row" style="margin-top: 15px">
+              <div class="col-lg-4" id="poll">
+                <input type="text" id="pollQuestion" class="form-control" style="margin-top: 5px" placeholder="Question?">
+              </div>
+              <div class="col-lg-4">
+                <div id="options"></div>
+                <input type="button" value="+ option" style="margin-top: 10px;  float: right" class="btn btn-primary" id="add" onclick="Dapp.addOption()"
+                />
+              </div>
+              <div class="col-lg-4">
+                <button onclick="Dapp.createNewPoll()" style="margin-top: 5px;  float: right" class="btn btn-primary">Submit</button>
+              </div>
+            </div>
+          </div>
         </div>
-         
+
 
       </div>
     </div>
   </div>
-
-  <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+  <script src="web3.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
+    crossorigin="anonymous"></script>
   <script src="compiled-contracts/Poll.js"></script>
   <script src="compiled-contracts/PollFactory.js"></script>
   <script src="index.js"></script>
-  
+
 </body>
 
 </html>
