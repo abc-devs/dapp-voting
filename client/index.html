@@ -27,6 +27,10 @@
         <a class="nav-link disabled" id="create-polls-tab" data-toggle="tab" href="#panel-create-polls" role="tab" aria-controls="panel-create-polls"
           aria-selected="false">Create Polls</a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link disabled" id="voting-tab" data-toggle="tab" href="#panel-voting" role="tab" aria-controls="panel-voting"
+          aria-selected="false">Voting</a>
+      </li>
     </ul>
     <div class="tab-content" id="myTabContent">
       <div class="tab-pane show active" id="panel-account" role="tabpanel" aria-labelledby="account-tab">
@@ -45,6 +49,7 @@
           <button type="button" class="btn btn-secondary btn-sm" onclick="Dapp.inputUserAddress()">Input existing address</button>
         </div>
       </div>
+      
       <div class="tab-pane" id="panel-node-status" role="tabpanel" aria-labelledby="node-status-tab">
         <div class="container pt-3 text-secondary">
           <h6>Coinbase:
@@ -64,6 +69,7 @@
           </h6>
         </div>
       </div>
+      
       <div class="tab-pane" id="panel-create-polls" role="tabpanel" aria-labelledby="create-polls-tab">
         <div class="container">
           <div class="row" style="margin-top: 15px">
@@ -112,12 +118,49 @@
             </div>
           </div>
         </div>
+      </div>
 
+      <div class="tab-pane" id="panel-voting" role="tabpanel" aria-labelledby="voting-tab">
+        <div class="container pt-3">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="basic-addon1">Poll address</span>
+            </div>
+            <input type="text" id="inputPollAddress" class="form-control" placeholder="0x" aria-label="0x" aria-describedby="basic-addon1">
+            <div class="input-group-append">
+              <button class="btn btn-primary" type="button" id="btnLoadPoll" onclick="Dapp.loadPollForVoting()">Load</button>
+            </div>
+          </div>
+        </div>
+        <div class="container pt-3" id="votingContainer">
 
+        </div>
       </div>
     </div>
   </div>
-  <script src="web3.js"></script>
+
+  <!-- doT templates -->
+  <script id="templateVoting" type="text/x-dot-template">
+    <hr>
+    <form class="form-voting">
+        <h5>{{=it.question}}</h5>
+        <small id="pollAddressText" class="form-text text-muted mb-3">
+            {{=it.address}}
+        </small>
+        {{~ it.options :option:i }}
+        <div class="custom-control custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="opiton{{=i}}">
+            <label class="custom-control-label" for="opiton{{=i}}">{{=option}}</label>
+        </div>
+        {{~}}
+        <div class="mt-3">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="Dapp.submitChoices()">Submit my choices</button>
+        </div>
+    </form>
+	</script>
+
+  <!-- Libraries -->
+  <script src="js/web3.js"></script>
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
     crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
@@ -126,8 +169,8 @@
     crossorigin="anonymous"></script>
   <script src="compiled-contracts/Poll.js"></script>
   <script src="compiled-contracts/PollFactory.js"></script>
-  <script src="index.js"></script>
-
+  <script src="js/doT.min.js"></script>
+  <script src="js/index.js"></script>
 </body>
 
 </html>

@@ -72,6 +72,7 @@ const Dapp = {
     var pollfactoryContract = Dapp.web3.eth.contract(
       JSON.parse(compiledFactory.interface)
     );
+    console.log("Deploying poll factory...");
     pollfactoryContract.new(
       {
         from: Dapp.userAddress,
@@ -238,6 +239,35 @@ const Dapp = {
       ' <input type="text" style="margin-top: 5px" class="form-control option" placeholder="Option"/>'
     );
     $("#options").append(input);
+  },
+
+  // Voting feature
+  loadPollForVoting: function() {
+    inputPollAddress = $("#inputPollAddress");
+    pollAddress = inputPollAddress.val();
+    if (!Dapp.web3.isAddress(pollAddress)) {
+      alert("Please input a valid poll address!");
+      return;
+    }
+    inputPollAddress.val('');
+
+    pollContract = this.getPoll(pollAddress);
+    var pollSummary = pollContract.getSummary();
+    var question = pollSummary[0];
+    var nOfOption = pollSummary[1];
+    var options = [];
+    for (i = 0; i < nOfOption; i++) {
+      console.log(pollContract.options(i))
+      options.push(pollContract.options(i)[0]);
+    }
+
+    var pollTemplate = doT.template(document.getElementById('templateVoting').text, undefined, undefined);
+		document.getElementById('votingContainer').innerHTML = pollTemplate({'address': pollAddress, 'question': question, 'options': options});
+  },
+
+  submitChoices: function() {
+    pollAddress = $("#pollAddressText").text().trim();
+    console.log("Submit choices for poll " + pollAddress);
   }
 };
 var intRefreshBalance = setInterval(Dapp.refreshUserBalance, 2000);
