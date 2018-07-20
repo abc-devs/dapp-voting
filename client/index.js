@@ -74,8 +74,8 @@ const Dapp = {
     );
     pollfactoryContract.new(
       {
-        from: Dapp.web3.eth.accounts[0],
-        data: "0x" + compiledFactory.bytecode,
+        from: Dapp.userAddress,
+        data: compiledFactory.bytecode,
         gas: "4700000"
       },
       function(e, contract) {
@@ -131,16 +131,24 @@ const Dapp = {
     factory.createPoll(
       pollQuestion,
       {
-        from: Dapp.web3.eth.accounts[0],
+        from: Dapp.userAddress,
         gas: 1000000
       },
-      function(e, result) {
+      function(e, txHash) {
         if (!e) {
-          /*TODO solidity dont support return address of factory method so this is a workaround solution
-                , consider investigate how to use solidity events 
-                 */
-          var latestPollAddress = factory.latestPoll();
-          Dapp.addOptions(latestPollAddress, options);
+          console.log("Create poll - transaction hash:");
+          console.log(txHash);
+          
+          var pollCreatedEvent = factory.PollCreated();
+          pollCreatedEvent.watch(function(error, result) {
+            if (!error) {
+              if (result.transactionHash == txHash) {
+                console.log("On PollCreated -> Start adding options");
+                Dapp.addOptions(result.args.pollAddress, options);
+              }
+            }
+            pollCreatedEvent.stopWatching();
+          });          
         }
       }
     );
@@ -166,20 +174,14 @@ const Dapp = {
     var detailE = $("#pollDetail");
     var pollRow = $('<div class="row"></div>');
     var questionE = $(
-      '<div class="col-lg-4"><label style="margin-top: 5px">Question: ' +
-        question +
-        "</label></div>"
+      '<div class="col-lg-4"><label style="margin-top: 5px"><strong>Question:</strong> ' + question + "</label></div>"
     );
 
     var optionE = $("<div class='col-lg-8'></div>");
     options.forEach(option => {
       console.log(option);
       var optionName = $(
-        "<div class='row'><label>Option " +
-          (options.indexOf(option) + 1) +
-          ":" +
-          option[0] +
-          "</label></div>"
+        "<div class='row'><label><strong>Option[" + (options.indexOf(option) + 1) + "]:</strong> " + option[0] + "</label></div>"
       );
       optionE.append(optionName);
     });
@@ -193,7 +195,7 @@ const Dapp = {
       poll.createNewOption(
         option,
         {
-          from: Dapp.web3.eth.accounts[0],
+          from: Dapp.userAddress,
           gas: 1000000
         },
         (e, r) => {

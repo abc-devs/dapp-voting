@@ -1,11 +1,14 @@
 pragma solidity ^0.4.17;
 contract PollFactory{
+
+    event PollCreated(address pollAddress);
     
     address[] deployedPolls;
     address public latestPoll;
     function createPoll(string question) public {
         latestPoll = new Poll(question);
         deployedPolls.push(latestPoll);
+        emit PollCreated(latestPoll);
     }
     
     function getDeployedPolls() public view returns(address[]){
@@ -25,7 +28,7 @@ contract Poll{
     string public question;
     Option[] public options;
 
-    function Poll(string initQuestion) public {
+    constructor(string initQuestion) public {
         question = initQuestion;
     }
 
@@ -38,7 +41,7 @@ contract Poll{
     }
 
     function vote(uint[] optionsIndexes) public{
-        for (uint i=0; i < optionsIndexes.length; i++) {
+        for (uint i = 0; i < optionsIndexes.length; i++) {
             uint index = optionsIndexes[i];
             Option storage option = options[index];
             require(!option.voters[msg.sender]);
