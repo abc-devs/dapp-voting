@@ -180,7 +180,6 @@ const Dapp = {
 
     var optionE = $("<div class='col-lg-8'></div>");
     options.forEach(option => {
-      console.log(option);
       var optionName = $(
         "<div class='row'><label><strong>Option[" + (options.indexOf(option) + 1) + "]:</strong> " + option[0] + "</label></div>"
       );
@@ -242,6 +241,17 @@ const Dapp = {
   },
 
   // Voting feature
+  getPollOptions: function(pollContract) {
+    var pollSummary = pollContract.getSummary();
+    var question = pollSummary[0];
+    var nOfOption = pollSummary[1];
+    var options = [];
+    for (i = 0; i < nOfOption; i++) {
+      options.push(pollContract.options(i));
+    }
+    return options;
+  },
+
   loadPollForVoting: function() {
     inputPollAddress = $("#inputPollAddress");
     pollAddress = inputPollAddress.val();
@@ -249,25 +259,55 @@ const Dapp = {
       alert("Please input a valid poll address!");
       return;
     }
-    inputPollAddress.val('');
 
     pollContract = this.getPoll(pollAddress);
-    var pollSummary = pollContract.getSummary();
-    var question = pollSummary[0];
-    var nOfOption = pollSummary[1];
-    var options = [];
-    for (i = 0; i < nOfOption; i++) {
-      console.log(pollContract.options(i))
-      options.push(pollContract.options(i)[0]);
-    }
-
+    var options = this.getPollOptions(pollContract);
+    
     var pollTemplate = doT.template(document.getElementById('templateVoting').text, undefined, undefined);
-		document.getElementById('votingContainer').innerHTML = pollTemplate({'address': pollAddress, 'question': question, 'options': options});
+		document.getElementById('votingContainer').innerHTML = pollTemplate({'address': pollAddress, 'question': pollContract.question(), 'options': options});
   },
 
   submitChoices: function() {
     pollAddress = $("#pollAddressText").text().trim();
     console.log("Submit choices for poll " + pollAddress);
+    selectedOptions = []
+    $(".form-voting .poll-option").each((i, ckb) => {
+      if (ckb.checked) {
+        selectedOptions.push(parseInt(ckb.value))
+      }
+    });
+    
+    if (selectedOptions.length == 0) {
+      console.log('No options selected. Display poll result.');
+      this.loadPollResult(pollAddress);
+      return;
+    }
+
+    console.log('Selected options: ' + selectedOptions);
+    pollContract = this.getPoll(pollAddress);
+    pollContract.vote(selectedOptions, {from: Dapp.userAddress, gas: 1000000}, (error, txHash) => {
+      if (!error) {
+        console.log('Voting transaction hash: ' + txHash);
+      } else {
+        console.log('Failed to vote for poll: ' + pollAddress);
+        console.log(error);
+      }
+      this.loadPollResult(pollAddress);
+    })
+  },
+
+  viewPollResult: function() {
+    pollAddress = $("#inputPollAddress").val();
+    if (Dapp.web3.isAddress(pollAddress)) {
+      this.loadPollResult(pollAddress);
+    }
+  },
+
+  loadPollResult: function(pollAddress) {
+    pollContract = this.getPoll(pollAddress);
+    var options = this.getPollOptions(pollContract);
+    var pollTemplate = doT.template(document.getElementById('templateVoteResult').text, undefined, undefined);
+		document.getElementById('votingContainer').innerHTML = pollTemplate({'address': pollAddress, 'question': pollContract.question(), 'options': options});
   }
 };
 var intRefreshBalance = setInterval(Dapp.refreshUserBalance, 2000);

@@ -128,7 +128,8 @@
             </div>
             <input type="text" id="inputPollAddress" class="form-control" placeholder="0x" aria-label="0x" aria-describedby="basic-addon1">
             <div class="input-group-append">
-              <button class="btn btn-primary" type="button" id="btnLoadPoll" onclick="Dapp.loadPollForVoting()">Load</button>
+              <button class="btn btn-primary" type="button" id="btnLoadPoll" onclick="Dapp.loadPollForVoting()">Load Poll</button>
+              <button class="btn btn-secondary" type="button" id="btnViewPoll" onclick="Dapp.viewPollResult()">View Result</button>
             </div>
           </div>
         </div>
@@ -149,14 +150,32 @@
         </small>
         {{~ it.options :option:i }}
         <div class="custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" id="opiton{{=i}}">
-            <label class="custom-control-label" for="opiton{{=i}}">{{=option}}</label>
+            <input type="checkbox" class="custom-control-input poll-option" id="opiton{{=i}}" value="{{=i}}">
+            <label class="custom-control-label" for="opiton{{=i}}">{{=option[0]}}</label>
         </div>
         {{~}}
         <div class="mt-3">
             <button type="button" class="btn btn-secondary btn-sm" onclick="Dapp.submitChoices()">Submit my choices</button>
         </div>
     </form>
+  </script>
+  
+  <script id="templateVoteResult" type="text/x-dot-template">
+    <hr>
+    <div class="card voting-result" style="width: auto">
+      <div class="card-header">
+          {{=it.question}}
+          <br/>
+          <small class="text-muted">
+              {{=it.address}}
+          </small>
+      </div>
+      <ul class="list-group list-group-flush">
+        {{~ it.options :option:i }}
+        <li class="list-group-item">{{=option[0]}} ({{=option[1].toString(10)}} voted)</li>
+        {{~}}
+      </ul>
+    </div>
 	</script>
 
   <!-- Libraries -->

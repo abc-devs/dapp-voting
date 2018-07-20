@@ -44,7 +44,7 @@ contract Poll{
         for (uint i = 0; i < optionsIndexes.length; i++) {
             uint index = optionsIndexes[i];
             Option storage option = options[index];
-            require(!option.voters[msg.sender]);
+            require(!option.voters[msg.sender], "The voter already voted.");
             option.voters[msg.sender] = true;
             option.votedCount++;
         }
